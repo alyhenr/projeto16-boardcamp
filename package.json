@@ -1,0 +1,38 @@
+{
+  "name": "projeto16-boardcamp",
+  "version": "1.0.0",
+  "description": "Back end using PostGres - 16th project - Full Stack BootCamp",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon run ./src/app.js",
+    "start": "node ./src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alyhenr/projeto16-boardcamp.git"
+  },
+  "keywords": [
+    "backend",
+    "postgres",
+    "node"
+  ],
+  "author": "Alysson Henrique",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alyhenr/projeto16-boardcamp/issues"
+  },
+  "homepage": "https://github.com/alyhenr/projeto16-boardcamp#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.9",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "joi": "^17.9.2",
+    "pg": "^8.11.1"
+  }
+}
