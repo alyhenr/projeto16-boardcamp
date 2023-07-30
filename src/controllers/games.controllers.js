@@ -1,4 +1,5 @@
 import { db } from "../database/database.js";
+import getWithoutAuth from "../helpers/getWithoutAuth.js";
 
 export const insertGame = async (req, res) => {
     const { name, image, stockTotal, pricePerDay } = req.body;
@@ -11,6 +12,7 @@ export const insertGame = async (req, res) => {
             SELECT "name" FROM "games" WHERE "name" = $1
         )
     `;
+
     try {
         const dbResponse = await db.query(query, [name, image, stockTotal, pricePerDay]);
 
@@ -25,17 +27,4 @@ export const insertGame = async (req, res) => {
     }
 };
 
-export const getGames = async (req, res) => {
-    const query = `
-        SELECT * FROM "games"
-    `;
-
-    try {
-        const listOfGames = await db.query(query);
-        res.status(200).send(listOfGames.rows);
-    } catch (error) {
-        console.log(error);
-        res.sendStatus(500);
-    }
-    res.send("Get Games");
-};
+export const getGames = async (req, res) => { getWithoutAuth("games", res); };
