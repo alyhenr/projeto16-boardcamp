@@ -88,7 +88,7 @@ export const insertRental = async (req, res) => {
 
 export const finishRental = async (req, res) => {
     const { id } = req.params;
-    const todayDate = dayjs().format('YYYY-MM-DD').toString().replaceAll("-", "");
+    const todayDate = dayjs().format('YYYY-MM-DD').toString().split("").filter(c => c != "-").join("");
     try {
         //Check if id exists:
         if ((await db.query(`SELECT * FROM rentals WHERE id = $1`, [id])).rowCount == 0) {

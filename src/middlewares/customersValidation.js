@@ -1,4 +1,4 @@
-const removeNonNumerics = str => str.replaceAll(/[^0-9]/g, "");
+const removeNonNumerics = str => str.split("").filter(c => !c.match(/[^0-9]/g)).join("");
 
 export default (customersSchema) => (
     (req, res, next) => {
