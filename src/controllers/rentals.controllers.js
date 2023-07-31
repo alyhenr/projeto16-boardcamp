@@ -36,11 +36,18 @@ export const getRentals = (_, res) => {
 export const insertRental = async (req, res) => {
     const { customerId, gameId, daysRented } = req.body;
     try {
+        const activeRentals = await db.query(`
+            SELECT * FROM "rentals"
+            WHERE "returnDate" IS NULL
+            AND "gameId" = $1
+        `, [gameId]);
+        const n = activeRentals.rowCount;
+
         const dbResponse = await db.query(`
             SELECT "pricePerDay" FROM "games"
             WHERE id = $1
-            AND "stockTotal" > 0
-        `, [gameId]);
+            AND "stockTotal" > $2
+        `, [gameId, n]);
 
         if (dbResponse.rowCount == 0) {
             return res.status(400).send(`Jogo não está disponível: gameId = ${gameId}`);
@@ -69,15 +76,8 @@ export const insertRental = async (req, res) => {
             )
         `;
 
-        const result = postAndInsert(query, values, res, 400, `Id de usuário não encontrado: customerId = ${customerId}`);
+        postAndInsert(query, values, res, 400, `Id de usuário não encontrado: customerId = ${customerId}`);
 
-        if (result) {
-            db.query(`
-                UPDATE games
-                SET "stockTotal" = "stockTotal" - 1
-                WHERE id = $1
-            `, [gameId]);
-        }
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);
@@ -111,14 +111,6 @@ export const finishRental = async (req, res) => {
             return res.sendStatus(400);
         }
 
-        db.query(`
-            UPDATE games
-            SET "stockTotal" = "stockTotal" + 1
-            WHERE id = (
-                    SELECT "gameId" FROM rentals
-                    WHERE id = $1
-                )
-        `, [id]);
         return res.sendStatus(200);
     } catch (error) {
         console.log(error);
