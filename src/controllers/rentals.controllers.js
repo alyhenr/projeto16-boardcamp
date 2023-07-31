@@ -19,7 +19,6 @@ export const getRentals = (_, res) => {
                 const game = { id: row["g_id"], name: row["g_name"] };
 
                 row.rentDate = dayjs(row.rentDate).format('YYYY-MM-DD');
-                row.returnDate = dayjs(row.returnDate).format('YYYY-MM-DD');
 
                 delete row["c_id"];
                 delete row["c_name"];
