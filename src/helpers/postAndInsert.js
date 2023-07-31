@@ -7,8 +7,9 @@ export default async (query, values, res, errStatus, errMessage) => {
         if (dbResponse.rowCount == 0) {
             return res.status(errStatus).send(errMessage);
         }
+        res.sendStatus(201);
+        return true;
 
-        return res.sendStatus(201);
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);

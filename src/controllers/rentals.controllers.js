@@ -39,6 +39,7 @@ export const insertRental = async (req, res) => {
         const dbResponse = await db.query(`
             SELECT "pricePerDay" FROM "games"
             WHERE id = $1
+            AND "stockTotal" >= 1
         `, [gameId]);
 
         if (dbResponse.rowCount == 0) {
@@ -68,8 +69,15 @@ export const insertRental = async (req, res) => {
             )
         `;
 
-        postAndInsert(query, values, res, 400, `Id de usuário não encontrado: customerId = ${customerId}`);
+        const result = postAndInsert(query, values, res, 400, `Id de usuário não encontrado: customerId = ${customerId}`);
 
+        if (result) {
+            db.query(`
+                UPDATE games
+                SET "stockTotal" = "stockTotal" - 1
+                WHERE id = $1
+            `, [gameId]);
+        }
     } catch (error) {
         console.log(error);
         return res.sendStatus(500);
@@ -103,6 +111,14 @@ export const finishRental = async (req, res) => {
             return res.sendStatus(400);
         }
 
+        db.query(`
+            UPDATE games
+            SET "stockTotal" = "stockTotal" + 1
+            WHERE id = (
+                    SELECT "gameId" FROM rentals
+                    WHERE id = $1
+                )
+        `, [id]);
         return res.sendStatus(200);
     } catch (error) {
         console.log(error);
@@ -123,7 +139,7 @@ export const deleteRental = async (req, res) => {
         }
 
         const dbResponse = await db.query(`
-            DELETE FROM rentals WHERE id = $1 AND "returnDate" IS NULL
+            DELETE FROM rentals WHERE id = $1 AND "returnDate" IS NOT NULL
         `, [id]);
 
         if (dbResponse.rowCount == 0) {

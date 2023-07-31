@@ -31,11 +31,11 @@ export const insertCustomer = async (req, res) => {
     }
 };
 
-export const getCustomers = async (req, res) => { getWithoutAuth("customers", res); };
+export const getCustomers = async (req, res) => { getWithoutAuth("customers", res, null, undefined, { needed: true, dateFieldName: "birthday" }); };
 
 export const getCustomerById = (req, res) => {
     const { id } = req.params;
-    getWithoutAuth("customers", res, id);
+    getWithoutAuth("customers", res, id, undefined, { needed: true, dateFieldName: "birthday" });
 };
 
 export const updateCustomer = async (req, res) => {
@@ -55,7 +55,7 @@ export const updateCustomer = async (req, res) => {
             return res.status(409).send("CPF não corresponde ao id enviado.")
         }
 
-        res.sendStatus(201);
+        res.sendStatus(200);
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
