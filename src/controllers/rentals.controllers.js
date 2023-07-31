@@ -39,7 +39,7 @@ export const insertRental = async (req, res) => {
         const dbResponse = await db.query(`
             SELECT "pricePerDay" FROM "games"
             WHERE id = $1
-            AND "stockTotal" >= 1
+            AND "stockTotal" > 0
         `, [gameId]);
 
         if (dbResponse.rowCount == 0) {

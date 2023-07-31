@@ -27,4 +27,4 @@ export const insertGame = async (req, res) => {
     }
 };
 
-export const getGames = async (req, res) => { getWithoutAuth("games", res); };
+export const getGames = async (req, res) => { getWithoutAuth("games", res, null, undefined, { needed: false }); };

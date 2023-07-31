@@ -30,7 +30,7 @@ export default async (dbName, res, id = null, withJoin = { use: false }, formatD
                     dayjs(row[formatDateField.dateFieldName]).format('YYYY-MM-DD')
             }))
 
-            if (data.length == 1) data = data[0];
+            if (data.length == 1 && id != null) data = data[0];
         }
 
         if (id != null && data.length == 0) { return res.sendStatus(404); }

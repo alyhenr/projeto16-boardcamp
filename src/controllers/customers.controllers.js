@@ -45,14 +45,17 @@ export const updateCustomer = async (req, res) => {
     } = res.locals.customerInfo;
 
     const query = `
-        UPDATE "customers" SET name = $1, phone = $2, birthday = $3
-        WHERE cpf = $4 AND id = $5
+        UPDATE "customers" SET
+        name = $1, phone = $2, birthday = $3, cpf = $4
+        WHERE id = $5 AND (cpf = $4 OR NOT EXISTS(
+            SELECT cpf FROM "customers" WHERE cpf = $4
+        ))
     `;
     try {
         const dbResponse = await db.query(query, [name, phone, birthday, cpf, id]);
 
         if (dbResponse.rowCount == 0) {
-            return res.status(409).send("CPF não corresponde ao id enviado.")
+            return res.status(409).send("CPF não corresponde ao id enviado e pertence a outro usuário.")
         }
 
         res.sendStatus(200);
