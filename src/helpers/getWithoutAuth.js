@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { db } from "../database/database.js";
 
-export default async (dbName, res, id = null, withJoin = { use: false }, formatDateField) => {
+export default async (dbName, res, id = null, withJoin = { use: false }, formatDateField, getByName) => {
     let query = withJoin.use
         ? `
             SELECT ${withJoin.rows.join(", ")} FROM ${dbName}
@@ -13,13 +13,19 @@ export default async (dbName, res, id = null, withJoin = { use: false }, formatD
             SELECT * FROM ${dbName}
         `;
 
+    const values = [];
 
     if (id != null) {
-        query += `WHERE id = ${id}`;
+        query += `WHERE id = $1`;
+        values.push(id);
+    }
+
+    if (getByName) {
+        query += `WHERE LOWER(name) LIKE LOWER('${getByName}%')`;
     }
 
     try {
-        let data = (await db.query(query)).rows;
+        let data = (await db.query(query, values)).rows;
 
         if (withJoin.use) {
             data = withJoin.formatToSend(data);
